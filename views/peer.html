@@ -1,0 +1,61 @@
+﻿<div class="meeting-container">
+    <div class="video-section" id="peers">
+        <div class="participants-grid" id="videos">
+            <div class="participant-tile">
+                <video id="localVideo" class="participant-video" autoplay muted></video>
+                <div id="localVideoPlaceholder" class="participant-video" style="display:none;">👤</div>
+                <div class="participant-info">
+                    <span class="participant-name">{{ if .LocalUsername }}{{ .LocalUsername }}{{ else }}Вы{{ end }}</span>
+                    <div class="mic-indicator mic-on">🎤</div>
+                </div>
+            </div>
+            <div id="noone" class="column is-6 notif">
+                <article id="noonein" class="notification is-primary is-light">
+                    Ты пока один на встрече
+                </article>
+            </div>
+            <div id="nocon" class="column is-6 notif">
+                <article class="notification is-danger">
+                    Соединение потеряно. Обнови страницу
+                </article>
+            </div>
+        </div>
+    </div>
+    <div class="controls-panel">
+        <button class="control-btn" id="muteBtn" aria-label="Включить или выключить микрофон">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z" />
+                <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
+            </svg>
+        </button>
+        <button class="control-btn" id="videoBtn" aria-label="Включить или выключить камеру">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z" />
+            </svg>
+        </button>
+        <button class="control-btn" id="shareBtn" aria-label="Поделиться экраном">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.11-.9-2-2-2H4c-1.11 0-2 .89-2 2v10c0 1.1.89 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z" />
+            </svg>
+        </button>
+        <button class="control-btn leave" id="leaveBtn" aria-label="Покинуть встречу">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
+            </svg>
+        </button>
+    </div>
+</div>
+{{template "partials/chat"}}
+<script>
+    let RoomWebsocketAddr = "{{.RoomWebsocketAddr}}"
+	let ChatWebsocketAddr = "{{.ChatWebsocketAddr}}"
+	let ViewerWebsocketAddr = "{{.ViewerWebsocketAddr}}"
+	let TurnHost = "{{.TurnHost}}"
+	let TurnPort = "{{.TurnPort}}"
+	let TurnUsername = "{{.TurnUsername}}"
+	let TurnPassword = "{{.TurnPassword}}"
+</script>
+<script src="/javascript/peer.js"></script>
+<script src="/javascript/chat.js"></script>
+<script src="/javascript/viewer.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>

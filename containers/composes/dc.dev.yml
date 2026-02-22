@@ -1,0 +1,78 @@
+services:
+  server:
+    build:
+      context: ../..                              
+      dockerfile: containers/images/Dockerfile   
+    image: selektordisc:latest                   
+    ports:
+      - "8080:8080"
+    environment:
+      AUTH_TOKEN_SECRET: ${AUTH_TOKEN_SECRET}
+      ENVIRONMENT: PRODUCTION
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: ${POSTGRES_PORT:-5432}
+    volumes:
+      - ../../certs:/certs:ro
+    command: ["--addr", ":8080", "--cert", "/certs/192.168.0.102+3.pem", "--key", "/certs/192.168.0.102+3-key.pem"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200m"
+        max-file: "10"
+
+  turn:
+    build:
+      context: ../..
+      dockerfile: containers/images/Dockerfile.turn
+    image: myapp-turn:latest
+    ports:
+      - "3478:3478/udp"
+      - "3478:3478/tcp"
+      - "50000-55000:50000-55000/udp"
+    command:
+      [
+        "--public-ip",
+        "${TURN_PUBLIC_IP}",
+        "--port",
+        "${TURN_PORT:-3478}",
+        "--users",
+        "${TURN_USERS}",
+        "--realm",
+        "${TURN_REALM:-selektor}",
+      ]
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200m"
+        max-file: "10"
+
+  
+  postgres:
+    image: postgres:17.6
+    environment:
+       POSTGRES_DB: "${POSTGRES_DB}"
+       POSTGRES_USER: "${POSTGRES_USER}"
+       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+       PGDATA: "/var/lib/postgresql/data/pgdata"
+    ports:
+      - 55432:5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 4G

@@ -1,0 +1,73 @@
+services:
+  server:
+    build:
+      context: ../..
+      dockerfile: containers/images/Dockerfile
+    image: selektordisc:prod
+    env_file:
+      - ../../.env.prod
+    environment:
+      ENVIRONMENT: PRODUCTION
+      PORT: "8080"
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+    ports:
+      - "8080:8080"
+    command: ["--addr", ":8080"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "200m"
+        max-file: "10"
+
+  turn:
+    build:
+      context: ../..
+      dockerfile: containers/images/Dockerfile.turn
+    image: selektordisc-turn:prod
+    env_file:
+      - ../../.env.prod
+    ports:
+      - "3478:3478/udp"
+      - "3478:3478/tcp"
+      - "50000-55000:50000-55000/udp"
+    command:
+      [
+        "--public-ip",
+        "${TURN_PUBLIC_IP}",
+        "--port",
+        "3478",
+        "--users",
+        "${TURN_USERS}",
+        "--realm",
+        "${TURN_REALM}",
+      ]
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "200m"
+        max-file: "10"
+
+  postgres:
+    image: postgres:17.6
+    env_file:
+      - ../../.env.prod
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - voicechat_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+volumes:
+  voicechat_pgdata:

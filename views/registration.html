@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Р РµРіРёСЃС‚СЂР°С†РёСЏ</title>
+  <link rel="stylesheet" href="/stylesheets/main.css">
+</head>
+<body>
+  <div class="auth-container">
+    <h2>РЎРѕР·РґР°С‚СЊ Р°РєРєР°СѓРЅС‚</h2>
+    <form id="registerForm">
+      <div class="form-group">
+        <label for="username">РРјСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ</label>
+        <input type="text" id="username" placeholder="Р’РІРµРґРёС‚Рµ РёРјСЏ" required>
+      </div>
+      <div class="form-group">
+        <label for="password">РџР°СЂРѕР»СЊ</label>
+        <input type="password" id="password" placeholder="Р’РІРµРґРёС‚Рµ РїР°СЂРѕР»СЊ" minlength="8" required>
+      </div>
+      <div class="form-group">
+        <label for="confirm-password">РџРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ РїР°СЂРѕР»СЏ</label>
+        <input type="password" id="confirm-password" placeholder="РџРѕРІС‚РѕСЂРёС‚Рµ РїР°СЂРѕР»СЊ" minlength="8" required>
+      </div>
+      <p id="registerError" class="error-text"></p>
+      <button type="submit" class="auth-btn" id="registerBtn">Р—Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊСЃСЏ</button>
+    </form>
+    <div class="alt-link">
+      РЈР¶Рµ РµСЃС‚СЊ Р°РєРєР°СѓРЅС‚? <a href="/">Р’РѕР№С‚Рё</a>
+    </div>
+  </div>
+  <script src="/javascript/registration.js"></script>
+</body>
+</html>

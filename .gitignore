@@ -1,0 +1,54 @@
+﻿# ---> Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Go workspace
+/go.work
+/go.work.sum
+
+# Build & cache
+/bin/
+/dist/
+/build/
+/tmp/
+/go-build/
+/*.log
+
+# ---> Docker
+*.pid
+*.seed
+*.bak
+*.swp
+docker-compose.override.yml
+
+# ---> TLS / certs (local)
+certs/
+*.pem
+*.key
+
+# ---> Env (secrets)
+.env
+.env.*
+!.env.example
+!.env.prod.example
+
+# ---> IDE / редакторы
+.vscode/
+.idea/
+*.iml
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+
+# ---> Misc
+*.tar.gz
+*.zip
+*.tmp

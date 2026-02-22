@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:17.6
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "55432:5432"
+    volumes:
+      - voicechat_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+    restart: unless-stopped
+
+  migrator:
+    image: postgres:17.6
+    working_dir: /workspace
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./:/workspace
+    entrypoint: ["/bin/sh", "-c"]
+    command: |
+      set -eu
+      test -d /workspace/migrations
+      echo "Migration files:"
+      ls -1 /workspace/migrations/*.sql
+      for f in /workspace/migrations/*.sql; do
+        echo "Applying $$f"
+        psql "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT:-5432}/${POSTGRES_DB}?sslmode=disable" -v ON_ERROR_STOP=1 -f "$$f" || exit 1
+      done
+      echo "Schemas after migration:"
+      psql "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT:-5432}/${POSTGRES_DB}?sslmode=disable" -v ON_ERROR_STOP=1 -c "\dn"
+    restart: "no"
+
+volumes:
+  voicechat_pgdata:
